@@ -163,7 +163,8 @@ if [ -z "$strictDebootstrap" ]; then
 	# we want to effectively run "apt-get clean" after every install to keep images small (see output of "apt-get clean -s" for context)
 	{
 		aptGetClean='"rm -f /var/cache/apt/archives/*.deb /var/cache/apt/archives/partial/*.deb /var/cache/apt/*.bin || true";'
-		echo "DPkg::Post-Invoke { ${aptGetClean} };"
+		cleanLists='"rm -f /var/lib/apt/lists/*_* || true";'
+		echo "DPkg::Post-Invoke { ${aptGetClean}; ${cleanLists} };"
 		echo "APT::Update::Post-Invoke { ${aptGetClean} };"
 		echo 'Dir::Cache::pkgcache ""; Dir::Cache::srcpkgcache "";'
 	} | sudo tee etc/apt/apt.conf.d/no-cache > /dev/null
